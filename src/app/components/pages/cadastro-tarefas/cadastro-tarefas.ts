@@ -1,43 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { NgForm } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+
 
 @Component({
   selector: 'app-cadastro-tarefas',
+  imports: [
+    CommonModule
+  ],
   templateUrl: './cadastro-tarefas.html',
-  styleUrls: ['./cadastro-tarefas.css']
+  styleUrl: './cadastro-tarefas.css'
 })
-export class CadastroTarefas implements OnInit {
+export class CadastroTarefasComponent {
 
-  // Variáveis para armazenar as categorias e a tarefa
-  categorias: any[] = [];
-  task = {
-    titulo: '',
-    dataHora: '',
-    finalizado: false,
-    categoria: ''
-  };
 
-  constructor(private http: HttpClient) { }
 
+
+  //Atributos da classe
+ categorias : any[] = []; //array de objetos vazio
+
+
+  //injeção de dependência do HttpClient
+  http = inject(HttpClient);
+
+
+  //função executada quando o componente é inicializado
   ngOnInit() {
-    // Consultar as categorias na API
+    //fazendo uma requisição HTTP GET para consultar as categorias
     this.http.get('http://localhost:8081/api/v1/categorias')
-      .subscribe((response) => {
-        this.categorias = response as any[];
+      .subscribe((response) => { //capturando a resposta da API
+        //armazenando a resposta obtida da API no atributo da classe
+     this.categorias = response as any[];
       });
-  }
-
-  onSubmit() {
-    // Enviar a tarefa para a API
-    this.http.post('http://localhost:8081/api/v1/tarefas-kanban', this.task)
-      .subscribe(
-        (response) => {
-          console.log('Tarefa cadastrada com sucesso', response);
-        },
-        (error) => {
-          console.error('Erro ao cadastrar tarefa', error);
-        }
-      );
   }
 }
